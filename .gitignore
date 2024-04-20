@@ -5,6 +5,7 @@ Thumbs.db
 # 忽略训练素材
 datasets/
 /*.txt
+/*.pth
 
 
 # 忽略Python虚拟环境
