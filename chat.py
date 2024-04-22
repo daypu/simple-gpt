@@ -1,44 +1,9 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-import mmap
 import random
 import argparse
 
-device = torch.device("cpu")
-# device = torch.device("cuda")
-block_size = 64 # [1, 2, 3, 4, 5, 6, 7, 8]
-batch_size = 64 
-learning_rate = 2e-5
-max_iters = 2000
-eval_iters = 100
-dropout = 0.2 # 随机丢弃（置零）神经元的输出，以防止过拟合
-n_embed = 384 # 嵌入维度
-n_head = 8 # 多头的数量
-n_layers = 8 # Decoder的数量
-
-# def parse_args():
-#     parser = argparse.ArgumentParser(description='Custom Hyperparameters')
-    
-#     # 定义参数
-#     parser.add_argument('--device', type=str, default='cpu', choices=['cpu', 'cuda'], help='Device for training')
-#     parser.add_argument('--block_size', type=int, default=64, help='Block size')
-#     parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
-#     parser.add_argument('--learning_rate', type=float, default=2e-5, help='Learning rate')
-#     parser.add_argument('--max_iters', type=int, default=2000, help='Maximum number of iterations')
-#     parser.add_argument('--eval_iters', type=int, default=100, help='Number of iterations between evaluations')
-#     parser.add_argument('--dropout', type=float, default=0.2, help='Dropout probability')
-#     parser.add_argument('--n_embed', type=int, default=384, help='Embedding dimension')
-#     parser.add_argument('--n_head', type=int, default=8, help='Number of attention heads')
-#     parser.add_argument('--n_layers', type=int, default=8, help='Number of decoder layers')
-    
-#     # 解析参数
-#     args = parser.parse_args()
-#     return args
-
-# args = parse_args()
-
-chars = ''
 with open ("vocab.txt", "r", encoding="UTF-8") as f:
     text = f.read()
     chars = sorted(list(set(text)))
@@ -193,6 +158,42 @@ class GPTLanguageMoudle(nn.Module):
             # append sampled index to the running sequence
             index = torch.cat((index, index_next), dim=1) # (B, T+1)
         return index
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Custom Hyperparameters')
+    
+    # 定义参数
+    parser.add_argument('--device', type=str, default='cpu', choices=['cpu', 'cuda', 'mps'], help='Device for training')
+    parser.add_argument('--block_size', type=int, default=8, help='Block size')
+    parser.add_argument('--batch_size', type=int, default=8, help='Batch size')
+    parser.add_argument('--learning_rate', type=float, default=2e-5, help='Learning rate')
+    parser.add_argument('--max_iters', type=int, default=2000, help='Maximum number of iterations')
+    parser.add_argument('--eval_iters', type=int, default=100, help='Number of iterations between evaluations')
+    parser.add_argument('--dropout', type=float, default=0.2, help='Dropout probability')
+    parser.add_argument('--n_embed', type=int, default=384, help='Embedding dimension')
+    parser.add_argument('--n_head', type=int, default=8, help='Number of attention heads')
+    parser.add_argument('--n_layers', type=int, default=8, help='Number of decoder layers')
+    
+    # 解析参数
+    args = parser.parse_args()
+    return args
+
+args = parse_args()
+
+################################################################################################
+
+device = torch.device(args.device)
+block_size = args.block_size # [1, 2, 3, 4, 5, 6, 7, 8]
+batch_size = args.batch_size
+# learning_rate = 2e-5
+# max_iters = 2000
+# eval_iters = 100
+dropout = args.dropout # 随机丢弃（置零）神经元的输出，以防止过拟合
+n_embed = args.n_embed # 嵌入维度
+n_head = args.n_head # 多头的数量
+n_layers = args.n_layers # Decoder的数量
+
+################################################################################################
 
 model = GPTLanguageMoudle(vocab_size)
 
