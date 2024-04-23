@@ -5,6 +5,7 @@ Thumbs.db
 # 忽略训练素材
 datasets/
 /*.txt
+!requirements.txt
 /*.pth
 
 

@@ -164,8 +164,8 @@ def parse_args():
     
     # 定义参数
     parser.add_argument('--device', type=str, default='cpu', choices=['cpu', 'cuda', 'mps'], help='Device for training')
-    parser.add_argument('--block_size', type=int, default=8, help='Block size')
-    parser.add_argument('--batch_size', type=int, default=8, help='Batch size')
+    parser.add_argument('--block_size', type=int, default=64, help='Block size')
+    parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
     parser.add_argument('--learning_rate', type=float, default=2e-5, help='Learning rate')
     parser.add_argument('--max_iters', type=int, default=2000, help='Maximum number of iterations')
     parser.add_argument('--eval_iters', type=int, default=100, help='Number of iterations between evaluations')
@@ -198,7 +198,7 @@ n_layers = args.n_layers # Decoder的数量
 model = GPTLanguageMoudle(vocab_size)
 
 # 若要加载训练好的模型，在这里使用下面的代码：
-model = torch.load('model-01.pth')
+model = torch.load('model-exp.pth')
 print("Loaded Successfully!")
 
 m = model.to(device)
